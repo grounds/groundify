@@ -12,12 +12,14 @@ if((extra&64512)==56320){output.push(((value&1023)<<10)+(extra&1023)+65536)}else
     'font: 12px Helvetica, arial, freesans, clean, sans-serif;',
     'color: #666;'
 ].join('');
-    
+
 var controls = [
     '<div style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
         '<button style="'+buttonStyle+'">Run</button>',
         '<button style="'+buttonStyle+'">Reset</button>',
-        '<div class="line-data highlight" style="padding: 5px 5px 0 5px !important"></div>',
+        '<div class="line-data highlight" style="padding: 5px 5px 0 5px !important">',
+            '<pre class="line-pre console"></pre>',
+        '</div>',
     '</div>',
     '<div class="gist-meta">run with &#10084; by ',
         '<a href="http://beta.42grounds.io">Grounds</a>',
@@ -33,6 +35,7 @@ var extensions = {
     node: 'js',
     ruby: 'rb',
 };
+
     function Client(endpoint, gists) {
     this.endpoint = endpoint;
     this.loaded = false;
@@ -70,11 +73,11 @@ Client.prototype.run = function(gist) {
     this.filename = this.element.getElementsByTagName('a')[1].textContent;
     this.language = this.getLanguage();
     this.code = this.getCode();
-    
+
     if (this.language === 'invalid') return;
-    
+
     this.element.innerHTML += controls;
-    this.console = this.element.getElementsByClassName('line-data')[1];
+    this.console = this.element.getElementsByClassName('console')[0];
     this.buttons = {
         run: {
             element: this.element.getElementsByTagName('button')[0],
@@ -123,8 +126,8 @@ Gist.prototype.getCode = function() {
 Gist.prototype.getLanguage = function() {
     for(var language in extensions) {
         var regex = new RegExp('^.*\.('+extensions[language]+')$');
-        
-        if (this.filename.match(regex)) return language; 
+
+        if (this.filename.match(regex)) return language;
     }
     return 'invalid';
 }
@@ -137,18 +140,16 @@ Gist.prototype.addOutput = function(data) {
         case 'status':
             data.chunk = '[Program exited with status: '+data.chunk+']';
             cssClass = 'pl-ent';
-            style = 'style="margin-bottom: 5px !important;"'
             break;
         case 'stderr':
             cssClass = 'pl-s1';
             break;
     }
     this.console.innerHTML += [
-        '<pre class="line-pre" '+style+'>',
-            '<div class="line '+cssClass+'">'+data.chunk+'</div>',
-        '</pre>'
+        '<span class="line '+cssClass+'">'+data.chunk+'</span>',
     ].join('');
 }
+
     var gists = document.getElementsByClassName('gist-file');
 
 // If there is no gists on the page, there is no point
