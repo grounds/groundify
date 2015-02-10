@@ -133,8 +133,7 @@ Gist.prototype.getLanguage = function() {
 }
 
 Gist.prototype.addOutput = function(data) {
-    var cssClass = '',
-        style = '';
+    var cssClass = '';
 
     switch (data.stream) {
         case 'status':
@@ -145,9 +144,7 @@ Gist.prototype.addOutput = function(data) {
             cssClass = 'pl-s1';
             break;
     }
-    this.console.innerHTML += [
-        '<span class="line '+cssClass+'">'+data.chunk+'</span>',
-    ].join('');
+    this.console.innerHTML += '<span class="line '+cssClass+'">'+data.chunk+'</span>';
 }
 
     var gists = document.getElementsByClassName('gist-file');
