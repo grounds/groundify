@@ -9,7 +9,7 @@ if((extra&64512)==56320){output.push(((value&1023)<<10)+(extra&1023)+65536)}else
     'background-color: #f7f7f7;',
     'font-weight: bold;',
     'font: 12px Helvetica, arial, freesans, clean, sans-serif;',
-    'font-color: #666'
+    'color: #666'
 ].join('');
     
 var controls = [
