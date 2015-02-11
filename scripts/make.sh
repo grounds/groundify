@@ -2,12 +2,18 @@
 set -e
 
 origin="index.js"
-build_target="build/grounds-gist.js"
-min_target="build/grounds-gist.min.js"
+name="groundify"
+build_target="build/$name.js"
+min_target="build/$name.min.js"
+
+clean() {
+	rm -rf build/*
+}
 
 dependencies() {
 	npm install watchify -g
 	npm install browserify -g
+	npm install uglify-js -g
 	npm install
 }
 

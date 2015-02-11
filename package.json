@@ -1,5 +1,5 @@
 {
-  "name": "grounds-gist",
+  "name": "groundify",
   "version": "0.1.0",
   "description": "Make your gists runnable!",
   "main": "index.js",
