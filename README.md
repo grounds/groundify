@@ -8,8 +8,12 @@ Groundify is using [Grounds](http://beta.42grounds.io) code
 [runner](https://github.com/grounds/grounds-exec).
 
 Groundify enforces first that a gist is supported by the code runner.
-If this gist's language is supported, groundify add a control bar to run
+If this gist's language is supported, groundify adds a control bar to run
 this gist.
+
+**This project is still at an early development stage and therefore is unstable.**
+
+## Example:
 
 ![Groundify](/images/example.png)
 
@@ -24,4 +28,4 @@ this gist.
     <script src="https://rawgit.com/grounds/groundify/master/build/groundify.min.js"></script>
     ```
 
-**This project is still at an early development stage and therefore is unstable.**
+
