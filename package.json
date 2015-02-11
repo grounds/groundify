@@ -13,7 +13,7 @@
   "scripts": {},
   "repository": {
     "type": "git",
-    "url": "https://github.com/grounds/grounds-gist.git"
+    "url": "https://github.com/grounds/groundify.git"
   },
   "keywords": [
     "grounds",
@@ -26,7 +26,7 @@
   "author": "Adrien Folie <folie.adrien@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/grounds/grounds-gist/issues"
+    "url": "https://github.com/grounds/groundify/issues"
   },
-  "homepage": "https://github.com/grounds/grounds-gist"
+  "homepage": "https://github.com/grounds/groundify"
 }
