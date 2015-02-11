@@ -3,4 +3,6 @@
 
 Make you gists runnable!
 
+![Groundify](/images/example.png)
+
 **Development is just starting. Nothing interesting here yet.**
