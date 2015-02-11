@@ -1,20 +1,22 @@
-.PHONY: all re build lib minify clean vendor
+.PHONY: all re clean dependencies build dev minify 
 
-all: vendor build
+opts := index.js -o build/grounds-gist.js
 
-re: clean all
+all: build minify
 
-build: lib minify
+re: clean dependencies all
 
-lib:
-	./scripts/build.sh lib
-	
-minify:
-	./scripts/build.sh minify
-	
 clean:
-	rm -rf vendor/*
-	rm -rf build/*
-	
-vendor:
-	./scripts/vendor.sh
+	rm -rf node_modules
+
+dependencies:
+	./scripts/make.sh dependencies
+
+dev:
+	./scripts/make.sh dev
+
+build:
+	./scripts/make.sh build
+
+minify:
+	./scripts/make.sh minify

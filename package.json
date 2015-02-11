@@ -1,0 +1,32 @@
+{
+  "name": "grounds-gist",
+  "version": "0.1.0",
+  "description": "Make your gists runnable!",
+  "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
+  "dependencies": {
+    "socket.io-client": "1.3.x"
+  },
+  "devDependencies": {},
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/grounds/grounds-gist.git"
+  },
+  "keywords": [
+    "grounds",
+    "gist",
+    "code",
+    "runner",
+    "share",
+    "snippet"
+  ],
+  "author": "Adrien Folie <folie.adrien@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/grounds/grounds-gist/issues"
+  },
+  "homepage": "https://github.com/grounds/grounds-gist"
+}
