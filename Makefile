@@ -1,13 +1,11 @@
 .PHONY: all re clean dependencies build dev minify 
 
-opts := index.js -o build/grounds-gist.js
-
 all: build minify
 
-re: clean dependencies all
+re: clean all
 
 clean:
-	rm -rf node_modules
+	./scripts/make.sh clean
 
 dependencies:
 	./scripts/make.sh dependencies

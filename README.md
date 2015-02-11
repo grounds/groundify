@@ -1,5 +1,5 @@
-# grounds-gist
-[![Build Status](https://travis-ci.org/grounds/grounds-gist.svg)](https://travis-ci.org/grounds/grounds-gist)
+# groundify
+[![Build Status](https://travis-ci.org/grounds/groundify.svg)](https://travis-ci.org/grounds/groundify)
 
 Make you gists runnable!
 
