@@ -15,16 +15,18 @@ if((extra&64512)==56320){output.push(((value&1023)<<10)+(extra&1023)+65536)}else
 
 var controls = [
     '<div style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
-        '<button style="'+buttonStyle+'">Run</button>',
-        '<button style="'+buttonStyle+'">Reset</button>',
-        '<div class="line-data highlight" style="padding: 5px 5px 0 5px !important">',
-            '<pre class="line-pre console"></pre>',
+        '<button class="run" style="'+buttonStyle+'">Run</button>',
+        '<button class="flush" style="'+buttonStyle+'">Flush</button>',
+        '<div class="line-data highlight" style="padding: 0px !important">',
+            '<pre class="line-pre console" style="padding-bottom: 5px !important;"></pre>',
         '</div>',
     '</div>',
     '<div class="gist-meta">run with &#10084; by ',
         '<a href="http://beta.42grounds.io">Grounds</a>',
     '</div>'
 ].join('');
+
+var topBuffer = '<div style="margin-top: 5px !important;"></div>';
 
 // Language runner associated to file extension
 // e.g. Ruby official file extension is .rb
@@ -36,26 +38,30 @@ var extensions = {
     ruby: 'rb',
 };
 
-    function Client(endpoint, gists) {
+var runnerURL = 'ws://beta.42grounds.io';
+
+    function Client(endpoint) {
     this.endpoint = endpoint;
-    this.loaded = false;
+    this.gists = [];
     this.currentGist = null;
-    this.gists = gists;
+    this.firstConnection = true;
 }
 
 Client.prototype.connect = function() {
+    if (!this.shouldConnect()) return;
+
     this.socket = io.connect(this.endpoint);
-    
+
     var self = this;
 
     this.socket.on('connect', function() {
-        if (self.loaded) return;
+        if (!self.firstConnection) return;
 
-        self.loaded = true;
-        
-        for (var index = 0; index < self.gists.length; index++) {
-            var _ = new Gist(self.gists[index], self);
-        }
+        self.firstConnection = false;
+        self.gists.forEach(function(gist){
+           gist.addControls();
+        });
+
     }).on('run', function(data) {
         self.currentGist.addOutput(data);
     });
@@ -67,41 +73,32 @@ Client.prototype.run = function(gist) {
     this.currentGist = gist;
     this.socket.emit('run', {language: gist.language, code: gist.code});
 }
+
+// Shouldn't connect if there is no runnable gist
+// check languages compatibility first
+Client.prototype.shouldConnect = function() {
+    return this.gists.length > 0;
+}
+
+Client.prototype.load = function(gistElements) {
+    for (var index = 0; index < gistElements.length; index++) {
+        var gist = new Gist(gistElements[index], this);
+
+        if (gist.isValid()) this.gists.push(gist);
+    }
+}
+
     function Gist(element, client) {
     this.element = element;
     this.client = client;
-    this.filename = this.element.getElementsByTagName('a')[1].textContent;
-    this.language = this.getLanguage();
-    this.code = this.getCode();
 
-    if (this.language === 'invalid') return;
+    this.setFilename();
+    this.setLanguage();
+    this.setCode();
+}
 
-    this.element.innerHTML += controls;
-    this.console = this.element.getElementsByClassName('console')[0];
-    this.buttons = {
-        run: {
-            element: this.element.getElementsByTagName('button')[0],
-            gist: this,
-            onClick: function(handler) {
-                this.element.gist = this.gist;
-                this.element.addEventListener('click', handler);
-            }
-        },
-        reset: {
-            element: this.element.getElementsByTagName('button')[1],
-            gist: this,
-            onClick: function(handler) {
-                this.element.gist = this.gist;
-                this.element.addEventListener('click', handler);
-            }
-        }
-    }
-    this.buttons.run.onClick(function() {
-        this.gist.run();
-    });
-    this.buttons.reset.onClick(function() {
-       this.gist.flush();
-    });
+Gist.prototype.isValid = function() {
+    return this.language !== '';
 }
 
 Gist.prototype.run = function() {
@@ -112,48 +109,80 @@ Gist.prototype.flush = function() {
     this.console.innerHTML = '';
 }
 
-Gist.prototype.getCode = function() {
-    var lines = this.element.getElementsByClassName('line-data')[0]
-                            .getElementsByClassName('line'),
-        code  = '';
-
-    for (var index = 0; index < lines.length; index++) {
-        code += lines[index].textContent;
-    }
-    return code;
+Gist.prototype.setFilename = function() {
+    this.filename = this.element.getElementsByTagName('a')[1].textContent;
 }
 
-Gist.prototype.getLanguage = function() {
+Gist.prototype.setLanguage = function() {
+    this.language = '';
+
     for(var language in extensions) {
         var regex = new RegExp('^.*\.('+extensions[language]+')$');
 
-        if (this.filename.match(regex)) return language;
+        if (this.filename.match(regex)) {
+            this.language = language;
+        }
     }
-    return 'invalid';
+}
+
+Gist.prototype.setCode = function() {
+    var lines = this.getChildren('line-data')
+                    .getElementsByClassName('line');
+
+    this.code  = '';
+
+    for (var index = 0; index < lines.length; index++) {
+        this.code += lines[index].textContent;
+    }
+}
+
+
+Gist.prototype.getChildren = function(name) {
+    return this.element.getElementsByClassName(name)[0];
+}
+
+
+Gist.prototype.addControls = function() {
+    // Add controls
+    this.element.innerHTML += controls;
+    this.console = this.getChildren('console');
+
+    var self = this;
+
+    this.getChildren('run').addEventListener('click', function() {
+        self.run();
+    });
+    this.getChildren('flush').addEventListener('click', function() {
+       self.flush();
+    });
 }
 
 Gist.prototype.addOutput = function(data) {
-    var cssClass = '';
+    var klass = '';
 
     switch (data.stream) {
+        case 'start':
+            this.console.innerHTML += topBuffer;
+            return;
         case 'status':
             data.chunk = '[Program exited with status: '+data.chunk+']';
-            cssClass = 'pl-ent';
+            klass = 'pl-ent';
             break;
         case 'stderr':
-            cssClass = 'pl-s1';
+            klass = 'pl-s1';
             break;
     }
-    this.console.innerHTML += '<span class="line '+cssClass+'">'+data.chunk+'</span>';
+    this.console.innerHTML += '<span class="line '+klass+'">'+data.chunk+'</span>';
 }
 
     var gists = document.getElementsByClassName('gist-file');
 
 // If there is no gists on the page, there is no point
-// to establish a connection with grounds code runner.
+// to do anything.
 if (gists.length <= 0) return;
 
-var client = new Client('ws://beta.42grounds.io', gists);
+var client = new Client(runnerURL, gists);
 
+client.load(gists);
 client.connect();
 })();
