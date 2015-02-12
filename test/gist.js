@@ -3,7 +3,7 @@ describe('Gist', function() {
         gists = document.getElementsByClassName('gist-file');
     });
 
-    it('page has a few gists', function() {
+    it('are loaded', function() {
         expect(gists.length).to.equal(3);
     });
 
