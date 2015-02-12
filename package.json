@@ -9,7 +9,10 @@
   "dependencies": {
     "socket.io-client": "1.3.x"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "chai": "2.0.x",
+    "mocha": "2.1.x"
+  },
   "scripts": {},
   "repository": {
     "type": "git",

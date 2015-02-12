@@ -7,14 +7,15 @@ build_target="build/$name.js"
 min_target="build/$name.min.js"
 
 clean() {
-	rm -rf build/*
+    rm -rf build/*
 }
 
 dependencies() {
-	npm install watchify -g
-	npm install browserify -g
-	npm install uglify-js -g
-	npm install
+    npm install -g watchify \
+                   browserify \
+                   uglify-js \
+                   mocha-phantomjs
+    npm install
 }
 
 dev() {
@@ -30,12 +31,12 @@ minify() {
 }
 
 main() {
-	# If first parameter from CLI is missing or empty
-	if [ -z $1 ]; then
-		echo "usage: build [dependencies|dev|build|minify]"
-		return
-	fi
-	eval $1
+    # If first parameter from CLI is missing or empty
+    if [ -z $1 ]; then
+        echo "usage: build [dependencies|dev|build|minify]"
+        return
+    fi
+    eval $1
 }
 
 main "$@"
