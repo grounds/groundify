@@ -18,3 +18,6 @@ build:
 
 minify:
 	./scripts/make.sh minify
+
+test: build
+	./scripts/make.sh test
