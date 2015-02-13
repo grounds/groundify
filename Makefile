@@ -1,4 +1,4 @@
-.PHONY: all re clean dependencies build dev minify 
+.PHONY: all re clean dependencies build dev minify test
 
 all: build minify
 
@@ -21,3 +21,4 @@ minify:
 
 test: build
 	./scripts/make.sh test
+

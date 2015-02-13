@@ -16,6 +16,10 @@ describe('Gist', function() {
             expectToHaveButton(name);
         });
 
+        it('has link to grounds.io', function() {
+
+        });
+
         function expectToHaveButton(name) {
             it('has a '+name+' button', function(done) {
                 setTimeout(function() {
@@ -35,6 +39,10 @@ describe('Gist', function() {
 
         ['run', 'flush'].forEach(function(name) {
             expectNotToHaveButton(name);
+        });
+
+        it('has no link to grounds.io', function() {
+
         });
 
         function expectNotToHaveButton(name) {
