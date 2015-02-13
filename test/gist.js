@@ -1,4 +1,10 @@
 describe('Gist', function() {
+    before(function(done) {
+        setTimeout(function() {
+            done();
+        }, 1000);
+    });
+
     beforeEach(function() {
         gists = document.getElementsByClassName('gist-file');
     });
@@ -16,18 +22,17 @@ describe('Gist', function() {
             expectToHaveButton(name);
         });
 
-        it('has link to grounds.io', function() {
+        it('has a link to grounds.io', function() {
+            var link = getGroundsLink();
 
+            expect(link.href).to.equal('http://beta.42grounds.io/');
         });
 
         function expectToHaveButton(name) {
-            it('has a '+name+' button', function(done) {
-                setTimeout(function() {
-                    var buttons = gist.getElementsByClassName(name);
+            it('has a '+name+' button', function() {
+                var buttons = gist.getElementsByClassName(name);
 
-                    expect(buttons.length).to.equal(1);
-                    done();
-                }, 1000);
+                expect(buttons.length).to.equal(1);
             });
         }
     });
@@ -42,18 +47,20 @@ describe('Gist', function() {
         });
 
         it('has no link to grounds.io', function() {
-
+            expect(getGroundsLink).to.throw(TypeError);
         });
 
         function expectNotToHaveButton(name) {
-            it('has no '+name+' button', function(done) {
-                setTimeout(function() {
-                    var buttons = gist.getElementsByClassName(name);
+            it('has no '+name+' button', function() {
+                var buttons = gist.getElementsByClassName(name);
 
-                    expect(buttons.length).to.equal(0);
-                    done();
-                }, 1000);
+                expect(buttons.length).to.equal(0);
             });
         }
     });
+
+    function getGroundsLink() {
+        return gist.getElementsByClassName('gist-meta')[1]
+                   .getElementsByTagName('a')[0];
+    }
 });
