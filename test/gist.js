@@ -30,9 +30,7 @@ describe('Gist', function() {
 
         function expectToHaveButton(name) {
             it('has a '+name+' button', function() {
-                var buttons = gist.getElementsByClassName(name);
-
-                expect(buttons.length).to.equal(1);
+                expect(getButton(name)).not.to.be.undefined;
             });
         }
     });
@@ -52,12 +50,14 @@ describe('Gist', function() {
 
         function expectNotToHaveButton(name) {
             it('has no '+name+' button', function() {
-                var buttons = gist.getElementsByClassName(name);
-
-                expect(buttons.length).to.equal(0);
+                expect(getButton(name)).to.be.undefined;
             });
         }
     });
+
+    function getButton(name) {
+        return gist.getElementsByClassName(name)[0];
+    }
 
     function getGroundsLink() {
         return gist.getElementsByClassName('gist-meta')[1]
