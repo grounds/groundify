@@ -1,4 +1,4 @@
-describe('Gist', function() {
+describe('Each gist file', function() {
     before(function(done) {
         setTimeout(function() {
             done();
@@ -9,7 +9,7 @@ describe('Gist', function() {
         gists = document.getElementsByClassName('gist-file');
     });
 
-    it('are loaded', function() {
+    it('is loaded', function() {
         expect(gists.length).to.equal(3);
     });
 
@@ -38,7 +38,7 @@ describe('Gist', function() {
                 }, 1000);
             });
 
-            it('has output on console', function() {
+            it('has proper output on console', function() {
                 var output = [
                     'hello javascript!',
                     '[Program exited with status: 0]',
