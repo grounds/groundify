@@ -28,9 +28,46 @@ describe('Gist', function() {
             expect(link.href).to.equal('http://beta.42grounds.io/');
         });
 
+        expectToHaveEmptyConsole();
+
+        context('after clicking run button', function() {
+            beforeEach(function(done){
+                getElement('run').click();
+                setTimeout(function() {
+                    done();
+                }, 1000);
+            });
+
+            it('has output on console', function() {
+                var output = [
+                    'hello javascript!',
+                    '[Program exited with status: 0]',
+                ].join('\n');
+
+                expect(consoleHasOutput(output)).to.be.true;
+            });
+
+            context('after clicking flush button', function() {
+                beforeEach(function(done){
+                    getElement('flush').click();
+                    setTimeout(function() {
+                        done();
+                    }, 1000);
+                });
+
+                expectToHaveEmptyConsole();
+            });
+        });
+
         function expectToHaveButton(name) {
             it('has a '+name+' button', function() {
-                expect(getButton(name)).not.to.be.undefined;
+                expect(getElement(name)).not.to.be.undefined;
+            });
+        }
+
+        function expectToHaveEmptyConsole() {
+            it('has an empty console', function() {
+                expect(consoleHasOutput('')).to.be.true;
             });
         }
     });
@@ -50,12 +87,16 @@ describe('Gist', function() {
 
         function expectNotToHaveButton(name) {
             it('has no '+name+' button', function() {
-                expect(getButton(name)).to.be.undefined;
+                expect(getElement(name)).to.be.undefined;
             });
         }
     });
 
-    function getButton(name) {
+    function consoleHasOutput(output) {
+        return getElement('console').textContent === output;
+    }
+
+    function getElement(name) {
         return gist.getElementsByClassName(name)[0];
     }
 
