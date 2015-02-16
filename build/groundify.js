@@ -98,7 +98,7 @@ module.exports.extensions = {
     rust: 'rs'
 };
 
-module.exports.runnerURL = 'ws://beta.42grounds.io';
+module.exports.runnerURL = 'wss://42grounds.io';
 
 },{}],4:[function(require,module,exports){
 var constants = require('./constants');
@@ -201,10 +201,11 @@ var gists = document.getElementsByClassName('gist-file');
 // to do anything.
 if (gists.length <= 0) return;
 
-var client = new Client(constants.runnerURL, gists);
+var client = new Client(constants.runnerURL);
 
 client.load(gists);
 client.connect();
+
 },{"./client":2,"./constants":3}],6:[function(require,module,exports){
 
 module.exports = require('./lib/');
