@@ -98,7 +98,7 @@ module.exports.extensions = {
     rust: 'rs'
 };
 
-module.exports.runnerURL = 'wss://42grounds.io';
+module.exports.runnerURL = 'wss://beta.42grounds.io';
 
 },{}],4:[function(require,module,exports){
 var constants = require('./constants');
