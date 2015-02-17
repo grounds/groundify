@@ -133,16 +133,16 @@ module.exports.klass = {
 }
 
 },{}],6:[function(require,module,exports){
-var embedded = require('./embedded'),
-    gistWebsite = require('./gist-website');
+var embedded = require('./gist-embedded'),
+    website = require('./gist-website');
 
 if (BUILD_TARGET === 'extension') {
-    module.exports = gistWebsite;
+    module.exports = website;
 } else {
     module.exports = embedded;
 }
 
-},{"./embedded":4,"./gist-website":5}],7:[function(require,module,exports){
+},{"./gist-embedded":4,"./gist-website":5}],7:[function(require,module,exports){
 var constants = require('./constants');
 
 function Gist(element, client) {
