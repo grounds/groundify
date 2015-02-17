@@ -30,6 +30,12 @@ minify() {
     uglifyjs $build_target -o $min_target
 }
 
+chrome() {
+    browserify index-extension.js -o "build/$name-extension.js"
+    uglifyjs "build/$name-extension.js" -o "build/$name-extension.min.js"
+    cat chrome/meta build/$name-extension.min.js > chrome/groundify.js
+}
+
 test() {
     mocha-phantomjs test/gist.html
 }

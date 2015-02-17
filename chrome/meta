@@ -1,0 +1,10 @@
+// ==UserScript==
+// @name           Groundify
+// @version        0.1.0
+// @namespace      https://beta.42grounds.io
+// @description    Display groundify on gist.github.com
+// @match          https://gist.github.com/
+// @match          http://gist.github.com/
+// @include        https://gist.github.com/*
+// @include        http://gist.github.com/*
+// ==/UserScript==
