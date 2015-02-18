@@ -10,7 +10,7 @@ mocha_phantomjs="./node_modules/mocha-phantomjs/bin/mocha-phantomjs"
 origin="index.js"
 project="groundify"
 build_target="build/$project.js"
-$build_min_target="build/$project.min.js"
+build_min_target="build/$project.min.js"
 
 
 clean() {
