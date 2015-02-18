@@ -31,21 +31,16 @@ minify() {
 }
 
 test_acceptance() {
-    $bin/mocha_phantomjs test/SpecRunner.html
+    echo "-- Acceptance Tests --"
+    $bin/mocha-phantomjs test/SpecRunner.html
+    echo "----------------------"
 }
 
 test_unit() {
-    npm test
-}
-
-test() {
-    echo "-- Acceptance Tests --"
-    test_acceptance
-    echo "----------------------"
-
     echo "----- Unit Tests -----"
-    test_unit
+    $bin/mocha $TEST_OPTS
     echo "----------------------"
+
 }
 
 main() {
