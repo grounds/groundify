@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-BUILD_TARGET = 'embedded';
+GROUNDIFY_BUILD_TARGET = '';
 
 module.exports = require('./lib');
 
@@ -17,7 +17,7 @@ function Client(endpoint) {
 Client.prototype.connect = function() {
     if (!this.shouldConnect()) return;
 
-    this.socket = io.connect(this.endpoint);
+    this.socket = io.connect(this.endpoint, {'forceNew': true});
 
     var self = this;
 
@@ -34,6 +34,16 @@ Client.prototype.connect = function() {
     });
 }
 
+Client.prototype.disconnect = function() {
+    if (!this.connected()) return;
+
+    this.socket.io.disconnect()
+}
+
+Client.prototype.connected = function() {
+    return this.socket && this.socket.connected;
+};
+
 Client.prototype.run = function(gist) {
     if (this.currentGist) this.currentGist.flush();
 
@@ -41,8 +51,7 @@ Client.prototype.run = function(gist) {
     this.socket.emit('run', {language: gist.language, code: gist.code});
 }
 
-// Shouldn't connect if there is no runnable gist
-// check languages compatibility first
+// Shouldn't connect if there is no runnable gist.
 Client.prototype.shouldConnect = function() {
     return this.gists.length > 0;
 }
@@ -51,7 +60,7 @@ Client.prototype.load = function(gistElements) {
     for (var index = 0; index < gistElements.length; index++) {
         var gist = new Gist(gistElements[index], this);
 
-        if (gist.isValid()) this.gists.push(gist);
+        if (gist.isRunnable()) this.gists.push(gist);
     }
 }
 
@@ -95,6 +104,11 @@ module.exports.extensions = {
 module.exports.runnerURL = 'wss://beta.42grounds.io';
 
 },{"./css":6}],4:[function(require,module,exports){
+// Styles adapted for gist website:
+// https://gist.github.com/
+//
+// Necessary to build browser extensions.
+
 module.exports.style = {
     button: [
         'padding: 5px;',
@@ -114,6 +128,8 @@ module.exports.klass = {
 }
 
 },{}],5:[function(require,module,exports){
+// Styles adapted for embedded gists.
+
 module.exports.style = {
     button: [
         'padding: 5px;',
@@ -131,18 +147,25 @@ module.exports.klass = {
     gists: 'file',
     meta: 'meta clearfix'
 }
-
 },{}],6:[function(require,module,exports){
-var embedded = require('./embedded'),
-    gistWebsite = require('./gist-website');
+var embedded = require('./gist-embedded'),
+    website = require('./gist-website');
 
-if (BUILD_TARGET === 'extension') {
-    module.exports = gistWebsite;
-} else {
-    module.exports = embedded;
+// Both dependencies needs to be packaged by
+// browserify and be resolved at runtime.
+
+function css() {
+    switch(GROUNDIFY_BUILD_TARGET) {
+        case 'extension':
+            return website;
+        default:
+            return embedded;
+    }
 }
 
-},{"./embedded":4,"./gist-website":5}],7:[function(require,module,exports){
+module.exports = css();
+
+},{"./gist-embedded":4,"./gist-website":5}],7:[function(require,module,exports){
 var constants = require('./constants');
 
 function Gist(element, client) {
@@ -154,7 +177,7 @@ function Gist(element, client) {
     this.setCode();
 }
 
-Gist.prototype.isValid = function() {
+Gist.prototype.isRunnable= function() {
     return this.language !== '';
 }
 
@@ -238,17 +261,11 @@ var constants = require('./constants'),
     css = require('./css'),
     Client = require('./client');
 
-var gists = document.getElementsByClassName(css.klass.gists);
-
-// If there is no gists on the page, there is no point
-// to do anything.
-if (gists.length <= 0) return;
-
-var client = new Client(constants.runnerURL);
+var client = new Client(constants.runnerURL),
+    gists = document.getElementsByClassName(css.klass.gists);
 
 client.load(gists);
 client.connect();
-
 },{"./client":2,"./constants":3,"./css":6}],9:[function(require,module,exports){
 
 module.exports = require('./lib/');

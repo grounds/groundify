@@ -1,43 +1,54 @@
 #!/bin/sh
 set -e
 
+# Binaries used to build, test and package this project.
+browserify="./node_modules/browserify/bin/cmd.js"
+watchify="./node_modules/watchify/bin/cmd.js"
+uglify="./node_modules/uglify-js/bin/uglify"
+mocha_phantomjs="./node_modules/mocha-phantomjs/bin/mocha-phantomjs"
+
 origin="index.js"
 name="groundify"
 build_target="build/$name.js"
 min_target="build/$name.min.js"
+
 
 clean() {
     rm -rf build/*
 }
 
 dependencies() {
-    npm install -g watchify \
-                   browserify \
-                   uglify-js \
-                   mocha-phantomjs
     npm install
 }
 
 dev() {
-    watchify $origin -o $build_target
+    $watchify $origin -o $build_target
 }
 
 build() {
-    browserify $origin -o $build_target
+    $browserify $origin -o $build_target
 }
 
 minify() {
-    uglifyjs $build_target -o $min_target
+    $uglifyjs $build_target -o $min_target
 }
 
-chrome() {
-    browserify index-extension.js -o "build/$name-extension.js"
-    uglifyjs "build/$name-extension.js" -o "build/$name-extension.min.js"
-    cat chrome/meta build/$name-extension.min.js > chrome/groundify.js
+test_acceptance() {
+    $mocha_phantomjs test/SpecRunner.html
+}
+
+test_unit() {
+    npm test
 }
 
 test() {
-    mocha-phantomjs test/gist.html
+    echo "-- Acceptance Tests --"
+    test_acceptance
+    echo "----------------------"
+
+    echo "----- Unit Tests -----"
+    test_unit
+    echo "----------------------"
 }
 
 main() {
