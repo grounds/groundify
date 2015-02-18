@@ -3,8 +3,9 @@ GROUNDIFY_BUILD_TARGET = '';
 
 module.exports = require('./lib');
 
-},{"./lib":8}],2:[function(require,module,exports){
+},{"./lib":5}],2:[function(require,module,exports){
 var io = require('socket.io-client'),
+    markup = require('./markup'),
     Gist = require('./gist');
 
 function Client(endpoint) {
@@ -56,34 +57,20 @@ Client.prototype.shouldConnect = function() {
     return this.gists.length > 0;
 }
 
-Client.prototype.load = function(gistElements) {
+Client.prototype.start = function() {
+    var gistElements = document.getElementsByClassName(markup.klass.gists);
+    
     for (var index = 0; index < gistElements.length; index++) {
         var gist = new Gist(gistElements[index], this);
 
         if (gist.isRunnable()) this.gists.push(gist);
     }
+    this.connect();
 }
 
 module.exports = Client;
 
-},{"./gist":7,"socket.io-client":9}],3:[function(require,module,exports){
-var css = require('./css');
-
-module.exports.controls = [
-    '<div style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
-        '<button class="run" style="'+css.style.button+'">Run</button>',
-        '<button class="flush" style="'+css.style.button+'">Flush</button>',
-        '<div class="line-data highlight" style="padding: 0px !important">',
-            '<pre class="line-pre console" style="padding-bottom: 5px !important;"></pre>',
-        '</div>',
-    '</div>',
-    '<div class="'+css.klass.meta+'">run with &#10084; by ',
-        '<a href="http://beta.42grounds.io">Grounds</a>',
-    '</div>'
-].join('');
-
-module.exports.topBuffer = '<div style="margin-top: 5px !important;"></div>';
-
+},{"./gist":4,"./markup":9,"socket.io-client":10}],3:[function(require,module,exports){
 // Language runner associated to file extension
 // e.g. Ruby official file extension is .rb
 module.exports.extensions = {
@@ -103,70 +90,9 @@ module.exports.extensions = {
 
 module.exports.runnerURL = 'wss://beta.42grounds.io';
 
-},{"./css":6}],4:[function(require,module,exports){
-// Styles adapted for gist website:
-// https://gist.github.com/
-//
-// Necessary to build browser extensions.
-
-module.exports.style = {
-    button: [
-        'padding: 5px;',
-        'margin-right: 5px;',
-        'border-radius: 2px;',
-        'border: 1px solid #ddd;',
-        'background-color: #f7f7f7;',
-        'font-weight: bold;',
-        'font: 12px Helvetica, arial, freesans, clean, sans-serif;',
-        'color: #666;'
-    ].join('')
-}
-
-module.exports.klass = {
-    gists: 'gist-file',
-    meta: 'gist-meta'
-}
-
-},{}],5:[function(require,module,exports){
-// Styles adapted for embedded gists.
-
-module.exports.style = {
-    button: [
-        'padding: 5px;',
-        'margin-right: 5px;',
-        'border-radius: 2px;',
-        'border: 1px solid #ddd;',
-        'background-color: #f7f7f7;',
-        'font-weight: bold;',
-        'font: 12px Helvetica, arial, freesans, clean, sans-serif;',
-        'color: #666;'
-    ].join('')
-}
-
-module.exports.klass = {
-    gists: 'file',
-    meta: 'meta clearfix'
-}
-},{}],6:[function(require,module,exports){
-var embedded = require('./gist-embedded'),
-    website = require('./gist-website');
-
-// Both dependencies needs to be packaged by
-// browserify and be resolved at runtime.
-
-function css() {
-    switch(GROUNDIFY_BUILD_TARGET) {
-        case 'extension':
-            return website;
-        default:
-            return embedded;
-    }
-}
-
-module.exports = css();
-
-},{"./gist-embedded":4,"./gist-website":5}],7:[function(require,module,exports){
-var constants = require('./constants');
+},{}],4:[function(require,module,exports){
+var constants = require('./constants'),
+    markup = require('./markup');
 
 function Gist(element, client) {
     this.element = element;
@@ -224,7 +150,7 @@ Gist.prototype.getChildren = function(name) {
 
 Gist.prototype.addControls = function() {
     // Add controls
-    this.element.innerHTML += constants.controls;
+    this.element.innerHTML += markup.html.controls;
     this.console = this.getChildren('console');
 
     var self = this;
@@ -237,40 +163,129 @@ Gist.prototype.addControls = function() {
     });
 }
 
-Gist.prototype.addOutput = function(data) {
-    var klass = '';
-
-    switch (data.stream) {
-        case 'start':
-            this.console.innerHTML += constants.topBuffer;
-            return;
-        case 'status':
-            data.chunk = '[Program exited with status: '+data.chunk+']';
-            klass = 'pl-ent';
-            break;
-        case 'stderr':
-            klass = 'pl-s1';
-            break;
-    }
-    this.console.innerHTML += '<span class="line '+klass+'">'+data.chunk+'</span>';
+Gist.prototype.addOutput = function(output) {
+    this.console.innerHTML += markup.html.output(output);
 }
 
 module.exports = Gist;
-},{"./constants":3}],8:[function(require,module,exports){
+},{"./constants":3,"./markup":9}],5:[function(require,module,exports){
 var constants = require('./constants'),
-    css = require('./css'),
     Client = require('./client');
 
-var client = new Client(constants.runnerURL),
-    gists = document.getElementsByClassName(css.klass.gists);
+var _ = new Client(constants.runnerURL).start();
+},{"./client":2,"./constants":3}],6:[function(require,module,exports){
+var html = require('./html');
+// Styles adapted for gist website:
+// https://gist.github.com/
+//
+// Necessary to build browser extensions.
 
-client.load(gists);
-client.connect();
-},{"./client":2,"./constants":3,"./css":6}],9:[function(require,module,exports){
+module.exports.style = {
+    button: [
+        'padding: 5px;',
+        'margin-right: 5px;',
+        'border-radius: 2px;',
+        'border: 1px solid #ddd;',
+        'background-color: #f7f7f7;',
+        'font-weight: bold;',
+        'font: 12px Helvetica, arial, freesans, clean, sans-serif;',
+        'color: #666;'
+    ].join('')
+}
+
+module.exports.klass = {
+    gists: 'gist-file',
+    meta: 'gist-meta'
+}
+
+module.exports.html = html.load(this);
+},{"./html":8}],7:[function(require,module,exports){
+var html = require('./html');
+// Styles adapted for embedded gists.
+
+module.exports.style = {
+    button: [
+        'padding: 5px;',
+        'margin-right: 5px;',
+        'border-radius: 2px;',
+        'border: 1px solid #ddd;',
+        'background-color: #f7f7f7;',
+        'font-weight: bold;',
+        'font: 12px Helvetica, arial, freesans, clean, sans-serif;',
+        'color: #666;'
+    ].join('')
+}
+
+module.exports.klass = {
+    gists: 'file',
+    meta: 'meta clearfix'
+}
+
+module.exports.html = html.load(this);
+},{"./html":8}],8:[function(require,module,exports){
+// HTML is not dependent of build target
+function getControls(markup) {
+    return [
+        '<div style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
+            '<button class="run" style="'+markup.style.button+'">Run</button>',
+            '<button class="flush" style="'+markup.style.button+'">Flush</button>',
+            '<div class="line-data highlight" style="padding: 0px !important">',
+                '<pre class="line-pre console" style="padding-bottom: 5px !important;"></pre>',
+            '</div>',
+        '</div>',
+        '<div class="'+markup.klass.meta+'">run with &#10084; by ',
+            '<a href="http://beta.42grounds.io">Grounds</a>',
+        '</div>'
+    ].join('');
+}
+
+function getOutput(markup) {
+    return function(output) {
+        var klass = '';
+
+        switch (output.stream) {
+            case 'start':
+                return '<div style="margin-top: 5px !important;"></div>';
+            case 'status':
+                output.chunk = '[Program exited with status: '+output.chunk+']';
+                klass = 'pl-ent';
+                break;
+            case 'stderr':
+                klass = 'pl-s1';
+                break;
+        }
+        return '<span class="line '+klass+'">'+output.chunk+'</span>';
+    };
+}
+
+module.exports.load = function(markup) {
+    return {
+        controls: getControls(markup),
+        output: getOutput(markup)
+    };
+}
+},{}],9:[function(require,module,exports){
+var embedded = require('./gist-embedded'),
+    website = require('./gist-website');
+
+// Both dependencies needs to be packaged by
+// browserify and be resolved at runtime.
+
+function initialize() {
+    switch(GROUNDIFY_BUILD_TARGET) {
+        case 'extension':
+            return website;
+        default:
+            return embedded;
+    }
+}
+
+module.exports = initialize();
+},{"./gist-embedded":6,"./gist-website":7}],10:[function(require,module,exports){
 
 module.exports = require('./lib/');
 
-},{"./lib/":10}],10:[function(require,module,exports){
+},{"./lib/":11}],11:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -359,7 +374,7 @@ exports.connect = lookup;
 exports.Manager = require('./manager');
 exports.Socket = require('./socket');
 
-},{"./manager":11,"./socket":13,"./url":14,"debug":18,"socket.io-parser":54}],11:[function(require,module,exports){
+},{"./manager":12,"./socket":14,"./url":15,"debug":19,"socket.io-parser":55}],12:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -864,7 +879,7 @@ Manager.prototype.onreconnect = function(){
   this.emitAll('reconnect', attempt);
 };
 
-},{"./on":12,"./socket":13,"./url":14,"backo2":15,"component-bind":16,"component-emitter":17,"debug":18,"engine.io-client":19,"indexof":50,"object-component":51,"socket.io-parser":54}],12:[function(require,module,exports){
+},{"./on":13,"./socket":14,"./url":15,"backo2":16,"component-bind":17,"component-emitter":18,"debug":19,"engine.io-client":20,"indexof":51,"object-component":52,"socket.io-parser":55}],13:[function(require,module,exports){
 
 /**
  * Module exports.
@@ -890,7 +905,7 @@ function on(obj, ev, fn) {
   };
 }
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -1277,7 +1292,7 @@ Socket.prototype.disconnect = function(){
   return this;
 };
 
-},{"./on":12,"component-bind":16,"component-emitter":17,"debug":18,"has-binary":48,"socket.io-parser":54,"to-array":58}],14:[function(require,module,exports){
+},{"./on":13,"component-bind":17,"component-emitter":18,"debug":19,"has-binary":49,"socket.io-parser":55,"to-array":59}],15:[function(require,module,exports){
 (function (global){
 
 /**
@@ -1354,7 +1369,7 @@ function url(uri, loc){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"debug":18,"parseuri":52}],15:[function(require,module,exports){
+},{"debug":19,"parseuri":53}],16:[function(require,module,exports){
 
 /**
  * Expose `Backoff`.
@@ -1441,7 +1456,7 @@ Backoff.prototype.setJitter = function(jitter){
 };
 
 
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 /**
  * Slice reference.
  */
@@ -1466,7 +1481,7 @@ module.exports = function(obj, fn){
   }
 };
 
-},{}],17:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 
 /**
  * Expose `Emitter`.
@@ -1632,7 +1647,7 @@ Emitter.prototype.hasListeners = function(event){
   return !! this.listeners(event).length;
 };
 
-},{}],18:[function(require,module,exports){
+},{}],19:[function(require,module,exports){
 
 /**
  * Expose `debug()` as the module.
@@ -1771,11 +1786,11 @@ try {
   if (window.localStorage) debug.enable(localStorage.debug);
 } catch(e){}
 
-},{}],19:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 
 module.exports =  require('./lib/');
 
-},{"./lib/":20}],20:[function(require,module,exports){
+},{"./lib/":21}],21:[function(require,module,exports){
 
 module.exports = require('./socket');
 
@@ -1787,7 +1802,7 @@ module.exports = require('./socket');
  */
 module.exports.parser = require('engine.io-parser');
 
-},{"./socket":21,"engine.io-parser":33}],21:[function(require,module,exports){
+},{"./socket":22,"engine.io-parser":34}],22:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -2496,7 +2511,7 @@ Socket.prototype.filterUpgrades = function (upgrades) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./transport":22,"./transports":23,"component-emitter":17,"debug":30,"engine.io-parser":33,"indexof":50,"parsejson":44,"parseqs":45,"parseuri":46}],22:[function(require,module,exports){
+},{"./transport":23,"./transports":24,"component-emitter":18,"debug":31,"engine.io-parser":34,"indexof":51,"parsejson":45,"parseqs":46,"parseuri":47}],23:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -2657,7 +2672,7 @@ Transport.prototype.onClose = function () {
   this.emit('close');
 };
 
-},{"component-emitter":17,"engine.io-parser":33}],23:[function(require,module,exports){
+},{"component-emitter":18,"engine.io-parser":34}],24:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies
@@ -2714,7 +2729,7 @@ function polling(opts){
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling-jsonp":24,"./polling-xhr":25,"./websocket":27,"xmlhttprequest":28}],24:[function(require,module,exports){
+},{"./polling-jsonp":25,"./polling-xhr":26,"./websocket":28,"xmlhttprequest":29}],25:[function(require,module,exports){
 (function (global){
 
 /**
@@ -2951,7 +2966,7 @@ JSONPPolling.prototype.doWrite = function (data, fn) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":26,"component-inherit":29}],25:[function(require,module,exports){
+},{"./polling":27,"component-inherit":30}],26:[function(require,module,exports){
 (function (global){
 /**
  * Module requirements.
@@ -3339,7 +3354,7 @@ function unloadHandler() {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./polling":26,"component-emitter":17,"component-inherit":29,"debug":30,"xmlhttprequest":28}],26:[function(require,module,exports){
+},{"./polling":27,"component-emitter":18,"component-inherit":30,"debug":31,"xmlhttprequest":29}],27:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3586,7 +3601,7 @@ Polling.prototype.uri = function(){
   return schema + '://' + this.hostname + port + this.path + query;
 };
 
-},{"../transport":22,"component-inherit":29,"debug":30,"engine.io-parser":33,"parseqs":45,"xmlhttprequest":28}],27:[function(require,module,exports){
+},{"../transport":23,"component-inherit":30,"debug":31,"engine.io-parser":34,"parseqs":46,"xmlhttprequest":29}],28:[function(require,module,exports){
 /**
  * Module dependencies.
  */
@@ -3826,7 +3841,7 @@ WS.prototype.check = function(){
   return !!WebSocket && !('__initialize' in WebSocket && this.name === WS.prototype.name);
 };
 
-},{"../transport":22,"component-inherit":29,"debug":30,"engine.io-parser":33,"parseqs":45,"ws":47}],28:[function(require,module,exports){
+},{"../transport":23,"component-inherit":30,"debug":31,"engine.io-parser":34,"parseqs":46,"ws":48}],29:[function(require,module,exports){
 // browser shim for xmlhttprequest module
 var hasCORS = require('has-cors');
 
@@ -3864,7 +3879,7 @@ module.exports = function(opts) {
   }
 }
 
-},{"has-cors":42}],29:[function(require,module,exports){
+},{"has-cors":43}],30:[function(require,module,exports){
 
 module.exports = function(a, b){
   var fn = function(){};
@@ -3872,7 +3887,7 @@ module.exports = function(a, b){
   a.prototype = new fn;
   a.prototype.constructor = a;
 };
-},{}],30:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 
 /**
  * This is the web browser implementation of `debug()`.
@@ -4021,7 +4036,7 @@ function load() {
 
 exports.enable(load());
 
-},{"./debug":31}],31:[function(require,module,exports){
+},{"./debug":32}],32:[function(require,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -4220,7 +4235,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":32}],32:[function(require,module,exports){
+},{"ms":33}],33:[function(require,module,exports){
 /**
  * Helpers.
  */
@@ -4333,7 +4348,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],33:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 (function (global){
 /**
  * Module dependencies.
@@ -4931,7 +4946,7 @@ exports.decodePayloadAsBinary = function (data, binaryType, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./keys":34,"after":35,"arraybuffer.slice":36,"base64-arraybuffer":37,"blob":38,"has-binary":39,"utf8":41}],34:[function(require,module,exports){
+},{"./keys":35,"after":36,"arraybuffer.slice":37,"base64-arraybuffer":38,"blob":39,"has-binary":40,"utf8":42}],35:[function(require,module,exports){
 
 /**
  * Gets the keys for an object.
@@ -4952,7 +4967,7 @@ module.exports = Object.keys || function keys (obj){
   return arr;
 };
 
-},{}],35:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 module.exports = after
 
 function after(count, callback, err_cb) {
@@ -4982,7 +4997,7 @@ function after(count, callback, err_cb) {
 
 function noop() {}
 
-},{}],36:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  * An abstraction for slicing an arraybuffer even when
  * ArrayBuffer.prototype.slice is not supported
@@ -5013,7 +5028,7 @@ module.exports = function(arraybuffer, start, end) {
   return result.buffer;
 };
 
-},{}],37:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /*
  * base64-arraybuffer
  * https://github.com/niklasvh/base64-arraybuffer
@@ -5074,7 +5089,7 @@ module.exports = function(arraybuffer, start, end) {
   };
 })("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/");
 
-},{}],38:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (global){
 /**
  * Create a blob builder even when vendor prefixes exist
@@ -5127,7 +5142,7 @@ module.exports = (function() {
 })();
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],39:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 (function (global){
 
 /*
@@ -5189,12 +5204,12 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":40}],40:[function(require,module,exports){
+},{"isarray":41}],41:[function(require,module,exports){
 module.exports = Array.isArray || function (arr) {
   return Object.prototype.toString.call(arr) == '[object Array]';
 };
 
-},{}],41:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 (function (global){
 /*! http://mths.be/utf8js v2.0.0 by @mathias */
 ;(function(root) {
@@ -5437,7 +5452,7 @@ module.exports = Array.isArray || function (arr) {
 }(this));
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],42:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -5462,7 +5477,7 @@ try {
   module.exports = false;
 }
 
-},{"global":43}],43:[function(require,module,exports){
+},{"global":44}],44:[function(require,module,exports){
 
 /**
  * Returns `this`. Execute this without a "context" (i.e. without it being
@@ -5472,7 +5487,7 @@ try {
 
 module.exports = (function () { return this; })();
 
-},{}],44:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 (function (global){
 /**
  * JSON parse.
@@ -5507,7 +5522,7 @@ module.exports = function parsejson(data) {
   }
 };
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 /**
  * Compiles a querystring
  * Returns string representation of the object
@@ -5546,7 +5561,7 @@ exports.decode = function(qs){
   return qry;
 };
 
-},{}],46:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -5587,7 +5602,7 @@ module.exports = function parseuri(str) {
     return uri;
 };
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -5632,7 +5647,7 @@ function ws(uri, protocols, opts) {
 
 if (WebSocket) ws.prototype = WebSocket.prototype;
 
-},{}],48:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 (function (global){
 
 /*
@@ -5694,9 +5709,9 @@ function hasBinary(data) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"isarray":49}],49:[function(require,module,exports){
-arguments[4][40][0].apply(exports,arguments)
-},{"dup":40}],50:[function(require,module,exports){
+},{"isarray":50}],50:[function(require,module,exports){
+arguments[4][41][0].apply(exports,arguments)
+},{"dup":41}],51:[function(require,module,exports){
 
 var indexOf = [].indexOf;
 
@@ -5707,7 +5722,7 @@ module.exports = function(arr, obj){
   }
   return -1;
 };
-},{}],51:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 
 /**
  * HOP ref.
@@ -5792,7 +5807,7 @@ exports.length = function(obj){
 exports.isEmpty = function(obj){
   return 0 == exports.length(obj);
 };
-},{}],52:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 /**
  * Parses an URI
  *
@@ -5819,7 +5834,7 @@ module.exports = function parseuri(str) {
   return uri;
 };
 
-},{}],53:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 (function (global){
 /*global Blob,File*/
 
@@ -5964,7 +5979,7 @@ exports.removeBlobs = function(data, callback) {
 };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{"./is-buffer":55,"isarray":56}],54:[function(require,module,exports){
+},{"./is-buffer":56,"isarray":57}],55:[function(require,module,exports){
 
 /**
  * Module dependencies.
@@ -6366,7 +6381,7 @@ function error(data){
   };
 }
 
-},{"./binary":53,"./is-buffer":55,"component-emitter":17,"debug":18,"isarray":56,"json3":57}],55:[function(require,module,exports){
+},{"./binary":54,"./is-buffer":56,"component-emitter":18,"debug":19,"isarray":57,"json3":58}],56:[function(require,module,exports){
 (function (global){
 
 module.exports = isBuf;
@@ -6383,9 +6398,9 @@ function isBuf(obj) {
 }
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
-},{}],56:[function(require,module,exports){
-arguments[4][40][0].apply(exports,arguments)
-},{"dup":40}],57:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
+arguments[4][41][0].apply(exports,arguments)
+},{"dup":41}],58:[function(require,module,exports){
 /*! JSON v3.2.6 | http://bestiejs.github.io/json3 | Copyright 2012-2013, Kit Cambridge | http://kit.mit-license.org */
 ;(function (window) {
   // Convenience aliases.
@@ -7248,7 +7263,7 @@ arguments[4][40][0].apply(exports,arguments)
   }
 }(this));
 
-},{}],58:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module.exports = toArray
 
 function toArray(list, index) {
