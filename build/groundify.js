@@ -59,7 +59,7 @@ Client.prototype.shouldConnect = function() {
 
 Client.prototype.start = function() {
     var gistElements = document.getElementsByClassName(markup.klass.gists);
-    
+
     for (var index = 0; index < gistElements.length; index++) {
         var gist = new Gist(gistElements[index], this);
 
@@ -155,11 +155,13 @@ Gist.prototype.addControls = function() {
 
     var self = this;
 
-    this.getChildren('run').addEventListener('click', function() {
-        self.run();
-    });
-    this.getChildren('flush').addEventListener('click', function() {
-       self.flush();
+    ['run', 'flush'].forEach(function(action) {
+        var button = self.getChildren(action);
+
+        button.addEventListener('click', function() {
+            self[action]();
+        });
+
     });
 }
 
@@ -168,6 +170,7 @@ Gist.prototype.addOutput = function(output) {
 }
 
 module.exports = Gist;
+
 },{"./constants":3,"./markup":9}],5:[function(require,module,exports){
 var constants = require('./constants'),
     Client = require('./client');
