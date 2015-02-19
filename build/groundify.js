@@ -161,7 +161,6 @@ Gist.prototype.addControls = function() {
         button.addEventListener('click', function() {
             self[action]();
         });
-
     });
 }
 
