@@ -1,12 +1,6 @@
 describe('Each gist file', function() {
-    before(function(done) {
-        setTimeout(function() {
-            done();
-        }, 1000);
-    });
-
     beforeEach(function() {
-        gists = document.getElementsByClassName('gist-file');
+        gists = getGists();
     });
 
     it('is loaded', function() {
@@ -14,8 +8,18 @@ describe('Each gist file', function() {
     });
 
     context('when language is supported', function() {
-        beforeEach(function() {
-            gist = gists[0];
+        beforeEach(function(done) {
+            waitFor(function() {
+                gist = getGists()[0];
+
+                return getElement('controls');;
+            }, function() {
+                done();
+            });
+        });
+
+        it('has grounds controls', function() {
+            expect(getElement('controls')).not.to.be.undefined;
         });
 
         ['run', 'flush'].forEach(function(name) {
@@ -33,9 +37,12 @@ describe('Each gist file', function() {
         context('after clicking run button', function() {
             beforeEach(function(done){
                 getElement('run').click();
-                setTimeout(function() {
+
+                waitFor(function() {
+                    return getElement('status');
+                }, function() {
                     done();
-                }, 1000);
+                });
             });
 
             it('has proper output on console', function() {
@@ -48,11 +55,8 @@ describe('Each gist file', function() {
             });
 
             context('after clicking flush button', function() {
-                beforeEach(function(done){
+                beforeEach(function(){
                     getElement('flush').click();
-                    setTimeout(function() {
-                        done();
-                    }, 1000);
                 });
 
                 expectToHaveEmptyConsole();
@@ -100,8 +104,21 @@ describe('Each gist file', function() {
         return gist.getElementsByClassName(name)[0];
     }
 
+    function getGists() {
+        return document.getElementsByClassName('gist-file');
+    }
+
     function getGroundsLink() {
         return gist.getElementsByClassName('gist-meta')[1]
                    .getElementsByTagName('a')[0];
+    }
+
+    function waitFor(findElement, callback) {
+        var element = findElement();
+
+        if (!!element) return callback(element);
+        setTimeout(function() {
+            waitFor(findElement, callback);
+        }, 10);
     }
 });

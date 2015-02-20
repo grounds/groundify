@@ -20,10 +20,10 @@ build:
 minify:
 	./scripts/make.sh minify
 
-test: build test-unit test-acceptance
+test: test-unit test-acceptance
 
 test-unit:
 	./scripts/make.sh test_unit
 
-test-acceptance:
+test-acceptance: build
 	./scripts/make.sh test_acceptance

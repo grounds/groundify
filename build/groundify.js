@@ -228,7 +228,7 @@ module.exports.html = html.load(this);
 // HTML is not dependent of build target
 function getControls(markup) {
     return [
-        '<div style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
+        '<div class="controls" style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
             '<button class="run" style="'+markup.style.button+'">Run</button>',
             '<button class="flush" style="'+markup.style.button+'">Flush</button>',
             '<div class="line-data highlight" style="padding: 0px !important">',
@@ -256,6 +256,7 @@ function getOutput(markup) {
                 klass = 'pl-s1';
                 break;
         }
+        klass += ' ' + output.stream;
         return '<span class="line '+klass+'">'+output.chunk+'</span>';
     };
 }
@@ -266,6 +267,7 @@ module.exports.load = function(markup) {
         output: getOutput(markup)
     };
 }
+
 },{}],9:[function(require,module,exports){
 var embedded = require('./gist-embedded'),
     website = require('./gist-website');
