@@ -1,0 +1,11 @@
+function Gist(type) {
+
+}
+
+Gist.prototype.getGroundsLink = function() {
+
+}
+
+Gist.prototype.getControls = function() {
+
+}
