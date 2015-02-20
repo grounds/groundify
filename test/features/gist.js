@@ -1,6 +1,3 @@
-var NOT_SUPPORTED = 0,
-    RUNNABLE = 1;
-
 describe('Each gist file', function() {
     beforeEach(function() {
         gists = getGists();

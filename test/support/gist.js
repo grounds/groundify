@@ -1,4 +1,6 @@
-var prefix = 'grounds-';
+var prefix = 'grounds-',
+    NOT_SUPPORTED = 0,
+    RUNNABLE = 1;
 
 function Gist(type) {
     this.type = type;
