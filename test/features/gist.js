@@ -19,10 +19,6 @@ describe('Each gist file', function() {
             });
         });
 
-        it('has grounds controls', function() {
-            expect(gist.getControls()).not.to.be.undefined;
-        });
-
         ['run', 'flush'].forEach(function(name) {
             expectToHaveButton(name);
         });
