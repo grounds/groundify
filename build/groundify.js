@@ -132,8 +132,8 @@ Gist.prototype.setLanguage = function() {
 }
 
 Gist.prototype.setCode = function() {
-    var lines = this.getChildren('line-data')
-                    .getElementsByClassName('line');
+    var lines = this.element.getElementsByClassName('line-data')[0]
+                            .getElementsByClassName('line');
 
     this.code  = '';
 
@@ -144,7 +144,7 @@ Gist.prototype.setCode = function() {
 
 
 Gist.prototype.getChildren = function(name) {
-    return this.element.getElementsByClassName(name)[0];
+    return this.element.getElementsByClassName(markup.html.prefix+name)[0];
 }
 
 
@@ -225,14 +225,16 @@ module.exports.klass = {
 
 module.exports.html = html.load(this);
 },{"./html":8}],8:[function(require,module,exports){
+var prefix = 'grounds-';
+
 // HTML is not dependent of build target
 function getControls(markup) {
     return [
-        '<div class="controls" style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
-            '<button class="run" style="'+markup.style.button+'">Run</button>',
-            '<button class="flush" style="'+markup.style.button+'">Flush</button>',
+        '<div class="'+prefix+'controls" style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
+            '<button class="'+prefix+'run" style="'+markup.style.button+'">Run</button>',
+            '<button class="'+prefix+'flush" style="'+markup.style.button+'">Flush</button>',
             '<div class="line-data highlight" style="padding: 0px !important">',
-                '<pre class="line-pre console" style="padding-bottom: 5px !important;"></pre>',
+                '<pre class="line-pre '+prefix+'console" style="padding-bottom: 5px !important;"></pre>',
             '</div>',
         '</div>',
         '<div class="'+markup.klass.meta+'">run with &#10084; by ',
@@ -256,7 +258,7 @@ function getOutput(markup) {
                 klass = 'pl-s1';
                 break;
         }
-        klass += ' ' + output.stream;
+        klass += ' grounds-' + output.stream;
         return '<span class="line '+klass+'">'+output.chunk+'</span>';
     };
 }
@@ -264,7 +266,8 @@ function getOutput(markup) {
 module.exports.load = function(markup) {
     return {
         controls: getControls(markup),
-        output: getOutput(markup)
+        output: getOutput(markup),
+        prefix: prefix
     };
 }
 
