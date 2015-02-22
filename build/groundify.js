@@ -1,6 +1,4 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-GROUNDIFY_BUILD_TARGET = '';
-
 module.exports = require('./lib');
 
 },{"./lib":5}],2:[function(require,module,exports){
@@ -13,6 +11,7 @@ function Client(endpoint) {
     this.gists = [];
     this.currentGist = null;
     this.firstConnection = true;
+    this.socket = null;
 }
 
 Client.prototype.connect = function() {
@@ -29,7 +28,6 @@ Client.prototype.connect = function() {
         self.gists.forEach(function(gist){
            gist.addControls();
         });
-
     }).on('run', function(data) {
         self.currentGist.addOutput(data);
     });
@@ -42,7 +40,7 @@ Client.prototype.disconnect = function() {
 }
 
 Client.prototype.connected = function() {
-    return this.socket && this.socket.connected;
+    return !!this.socket && this.socket.connected;
 };
 
 Client.prototype.run = function(gist) {
@@ -279,15 +277,14 @@ var embedded = require('./gist-embedded'),
 // browserify and be resolved at runtime.
 
 function initialize() {
-    switch(GROUNDIFY_BUILD_TARGET) {
-        case 'extension':
-            return website;
-        default:
-            return embedded;
+    if (typeof(GROUNDIFY_BUILD_EXTENSION) !== 'undefined') {
+        return website;
     }
+    return embedded;
 }
 
 module.exports = initialize();
+
 },{"./gist-embedded":6,"./gist-website":7}],10:[function(require,module,exports){
 
 module.exports = require('./lib/');

@@ -93,6 +93,4 @@ describe('Each gist file', function() {
             });
         }
     });
-
-
 });

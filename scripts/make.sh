@@ -38,7 +38,7 @@ test_acceptance() {
 
 test_unit() {
     echo "----- Unit Tests -----"
-    $bin/mocha $TEST_OPTS
+    $bin/mocha --recursive test/lib
     echo "----------------------"
 
 }
