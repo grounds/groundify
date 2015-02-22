@@ -15,8 +15,8 @@
     "mocha": "2.1.x",
     "mocha-phantomjs": "3.5.x",
     "phantomjs": "1.9.x",
-    "sinon": "^1.12.2",
-    "sinon-chai": "^2.7.0",
+    "sinon": "1.12.x",
+    "sinon-chai": "2.7.x",
     "uglify-js": "2.4.x",
     "watchify": "2.3.x"
   },
