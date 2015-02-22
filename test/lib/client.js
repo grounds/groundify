@@ -25,9 +25,7 @@ describe('Client', function() {
         expect(client.shouldConnect()).to.be.false;
     });
 
-    it("is not connected to runner", function() {
-        expect(client.connected()).to.be.false;
-    });
+    expectNoToBeConnected();
 
     context('with runnable gists', function() {
         beforeEach(function() {
@@ -39,7 +37,20 @@ describe('Client', function() {
             expect(client.shouldConnect()).to.be.true;
         });
 
-        context('#connect()', function() {
+        context('with invalid runner endpoint', function() {
+            beforeEach(function() {
+                client.endpoint = '';
+                client.connect();
+            });
+
+            expectNoToBeConnected();
+
+            it("doesn't add controls to these gists", function() {
+                expect(gist.addControls).not.to.have.been.called;
+            });
+        });
+
+        context('with valid runner endpoint', function() {
             beforeEach(function(done) {
                 client.connect();
                 client.socket.on('connect', function() {
@@ -51,11 +62,11 @@ describe('Client', function() {
                 client.disconnect();
             });
 
-            it("open a connection with runner", function() {
+            it("opens a connection with runner", function() {
                 expect(client.connected()).to.be.true;
             });
 
-            it('add controls to these gists', function() {
+            it('adds controls to these gists', function() {
                 expect(gist.addControls).to.have.been.calledOnce;
             });
 
@@ -84,11 +95,17 @@ describe('Client', function() {
                         expect(client.currentGist).to.equal(anotherGist);
                     });
 
-                    it('flush previous gist', function() {
+                    it('flushes previous gist', function() {
                         expect(gist.flush).to.have.been.calledOnce;
                     });
                 });
             });
         });
     });
+
+    function expectNoToBeConnected() {
+        it('is not connected to runner', function() {
+            expect(client.connected()).to.be.false;
+        });
+    }
 });
