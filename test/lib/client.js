@@ -38,9 +38,16 @@ describe('Client', function() {
         });
 
         context('with invalid runner endpoint', function() {
-            beforeEach(function() {
+            beforeEach(function(done) {
                 client.endpoint = '';
                 client.connect();
+                client.socket.on('connect_error', function(err) {
+                    done();
+                });
+            });
+
+            afterEach(function() {
+                client.socket.removeAllListeners('connect_error');
             });
 
             expectNoToBeConnected();
