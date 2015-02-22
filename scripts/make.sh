@@ -1,43 +1,52 @@
 #!/bin/sh
 set -e
 
+# Binaries used to build, test and package this project.
+bin="./node_modules/.bin"
+
+project="groundify"
+
 origin="index.js"
-name="groundify"
-build_target="build/$name.js"
-min_target="build/$name.min.js"
+build_target="build/$project.js"
+build_min_target="build/$project.min.js"
 
 clean() {
     rm -rf build/*
 }
 
 dependencies() {
-    npm install -g watchify \
-                   browserify \
-                   uglify-js \
-                   mocha-phantomjs
     npm install
 }
 
 dev() {
-    watchify $origin -o $build_target
+    $bin/watchify $origin -o $build_target
 }
 
 build() {
-    browserify $origin -o $build_target
+    $bin/browserify $origin -o $build_target
 }
 
 minify() {
-    uglifyjs $build_target -o $min_target
+    $bin/uglifyjs $build_target -o $build_min_target
 }
 
-test() {
-    mocha-phantomjs test/gist.html
+test_acceptance() {
+    echo "-- Acceptance Tests --"
+    $bin/mocha-phantomjs test/SpecRunner.html
+    echo "----------------------"
+}
+
+test_unit() {
+    echo "----- Unit Tests -----"
+    $bin/mocha --recursive test/lib
+    echo "----------------------"
+
 }
 
 main() {
     # If first parameter from CLI is missing or empty
     if [ -z $1 ]; then
-        echo "usage: build [dependencies|dev|build|minify|test]"
+        echo "usage: please specify a command."
         return
     fi
     eval $1

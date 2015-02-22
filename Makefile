@@ -1,4 +1,5 @@
-.PHONY: all re clean dependencies build dev minify test
+.PHONY: all re clean dependencies build dev minify test test-unit test-acceptance
+
 
 all: build minify
 
@@ -19,6 +20,10 @@ build:
 minify:
 	./scripts/make.sh minify
 
-test: build
-	./scripts/make.sh test
+test: test-unit test-acceptance
 
+test-unit:
+	./scripts/make.sh test_unit
+
+test-acceptance: build
+	./scripts/make.sh test_acceptance
