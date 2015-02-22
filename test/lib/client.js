@@ -3,6 +3,7 @@ var sinon = require('sinon'),
     sinonChai = require('sinon-chai'),
     chai = require('chai'),
     expect = chai.expect,
+    constants = require('../../lib/constants'),
     Client = require('../../lib/client');
 
 chai.use(sinonChai);
@@ -17,7 +18,7 @@ function FakeGist() {
 
 describe('Client', function() {
     beforeEach(function() {
-        client = new Client('wss://beta.42grounds.io');
+        client = new Client(constants.runnerURL);
     });
 
     it("can't connect to runner", function() {
