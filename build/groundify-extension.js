@@ -173,7 +173,8 @@ var _ = new Client(constants.runnerURL).start();
 },{"./client":1,"./constants":2}],5:[function(require,module,exports){
 module.exports = require('/Users/folie_a/dev/grounds-gist/lib/markup/css_extension.js');
 },{"/Users/folie_a/dev/grounds-gist/lib/markup/css_extension.js":6}],6:[function(require,module,exports){
-// Styles adapted for embedded gists.
+// Styles adapted for extensions based
+// on https://gist.github.com markup.
 
 module.exports.style = {
     button: [
@@ -194,21 +195,21 @@ module.exports.klass = {
 }
 
 },{}],7:[function(require,module,exports){
-var markup = require('./css');
+var css = require('./css');
 
-var prefix = 'grounds-';
+module.exports.prefix = 'grounds-';
 
-module.exports.prefix = prefix;
+module.exports.klass = css.klass;
 
 module.exports.controls = [
-    '<div class="'+prefix+'controls" style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
-        '<button class="'+prefix+'run" style="'+markup.style.button+'">Run</button>',
-        '<button class="'+prefix+'flush" style="'+markup.style.button+'">Flush</button>',
+    '<div class="'+this.prefix+'controls" style="border-top: 1px solid #ddd; border-bottom: 1px solid #ddd; padding: 5px 5px 0px 5px">',
+        '<button class="'+this.prefix+'run" style="'+css.style.button+'">Run</button>',
+        '<button class="'+this.prefix+'flush" style="'+css.style.button+'">Flush</button>',
         '<div class="line-data highlight" style="padding: 0px !important">',
-            '<pre class="line-pre '+prefix+'console" style="padding-bottom: 5px !important;"></pre>',
+            '<pre class="line-pre '+this.prefix+'console" style="padding-bottom: 5px !important;"></pre>',
         '</div>',
     '</div>',
-    '<div class="'+markup.klass.meta+'">run with &#10084; by ',
+    '<div class="'+this.klass.meta+'">run with &#10084; by ',
         '<a href="http://beta.42grounds.io">Grounds</a>',
     '</div>'
 ].join('');
@@ -230,9 +231,6 @@ module.exports.output = function(output) {
     klass += ' grounds-' + output.stream;
     return '<span class="line '+klass+'">'+output.chunk+'</span>';
 }
-
-module.exports.style = markup.style;
-module.exports.klass = markup.klass;
 
 },{"./css":5}],8:[function(require,module,exports){
 

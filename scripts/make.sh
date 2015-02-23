@@ -4,11 +4,16 @@ set -e
 # Binaries used to build, test and package this project.
 bin="./node_modules/.bin"
 
-project="groundify"
+if [ -z "$BROWSERIFYSWAP_ENV" ]; then
+    build_type=""
+else
+    build_type="-$BROWSERIFYSWAP_ENV"
+fi
 
-origin="index.js"
-build_target="build/$project.js"
-build_min_target="build/$project.min.js"
+build_dir="build"
+build_name="groundify$build_type"
+build_target="$build_dir/$build_name.js"
+build_min_target="$build_dir/$build_name.min.js"
 
 clean() {
     rm -rf build/*
@@ -19,11 +24,11 @@ dependencies() {
 }
 
 dev() {
-    $bin/watchify $origin -o $build_target
+    $bin/watchify . -o $build_target
 }
 
 build() {
-    $bin/browserify $origin -o $build_target
+    $bin/browserify . -o $build_target
 }
 
 minify() {
@@ -40,7 +45,6 @@ test_unit() {
     echo "----- Unit Tests -----"
     $bin/mocha --recursive test/lib
     echo "----------------------"
-
 }
 
 main() {
