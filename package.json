@@ -11,6 +11,7 @@
   },
   "devDependencies": {
     "browserify": "8.1.x",
+    "browserify-swap": "0.2.x",
     "chai": "2.0.x",
     "mocha": "2.1.x",
     "mocha-phantomjs": "3.5.x",
@@ -22,6 +23,19 @@
   },
   "scripts": {
     "test": "make test"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-swap"
+    ]
+  },
+  "browserify-swap": {
+    "@packages": [
+      "css"
+    ],
+    "extension": {
+      "css.js$": "./lib/markup/css_extension.js"
+    }
   },
   "repository": {
     "type": "git",
