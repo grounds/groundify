@@ -8,36 +8,27 @@ var sinon = require('sinon'),
 
 chai.use(sinonChai);
 
-function FakeGist() {
-    this.addControls = sinon.stub();
-    this.addOuput = function(cb) { cb(); };
-    this.flush = sinon.stub();
-    this.language = 'ruby';
-    this.code = 'puts "hello world!';
-}
-
 describe('Client', function() {
     beforeEach(function() {
         client = new Client(constants.runnerURL);
+        gist = new FakeGist();
+        client.gists = [gist];
     });
 
-    it("can't connect to runner", function() {
-        expect(client.shouldConnect()).to.be.false;
-    });
+    describe('#connect()', function() {
+        context('with no runnable gist', function() {
+            beforeEach(function() {
+                client.gists = [];
+            });
 
-    expectNoToBeConnected();
+            it("doesn't open a connection with code runner", function() {
+                expect(client.shouldConnect()).to.be.false;
+            });
 
-    context('with runnable gists', function() {
-        beforeEach(function() {
-            gist = new FakeGist();
-            client.gists = [gist];
+            expectNoToBeConnected();
         });
 
-        it('is able to connect to the runner', function() {
-            expect(client.shouldConnect()).to.be.true;
-        });
-
-        context('with invalid runner endpoint', function() {
+        context('with invalid endpoint and runnable gists', function() {
             beforeEach(function(done) {
                 client.endpoint = '';
                 client.connect();
@@ -57,7 +48,7 @@ describe('Client', function() {
             });
         });
 
-        context('with valid runner endpoint', function() {
+        context('with valid endpoint and runnable gists', function() {
             beforeEach(function(done) {
                 client.connect();
                 client.socket.on('connect', function() {
@@ -69,49 +60,67 @@ describe('Client', function() {
                 client.disconnect();
             });
 
-            it("opens a connection with runner", function() {
+            it("opens a connection with code runner", function() {
                 expect(client.connected()).to.be.true;
             });
 
             it('adds controls to these gists', function() {
                 expect(gist.addControls).to.have.been.calledOnce;
             });
+        });
+    });
 
-            context('#run()', function() {
-                beforeEach(function() {
+    describe('#run()', function() {
+        context('when client is connected', function() {
+            beforeEach(function(done) {
+                client.connect();
+                client.socket.on('connect', function() {
                     client.run(gist);
+                    done();
+                });
+            });
+
+            afterEach(function() {
+                client.disconnect();
+            });
+
+            it('set current gist to this gist', function() {
+                expect(client.currentGist).to.equal(gist);
+            });
+
+            it('adds output to this gist', function(done) {
+                expect(gist.addOuput(function() {
+                    done();
+                }));
+            });
+
+            context('when running another gist', function() {
+                beforeEach(function() {
+                    anotherGist = new FakeGist();
+                    client.run(anotherGist);
                 });
 
-                it('set current gist', function() {
-                    expect(client.currentGist).to.equal(gist);
+                it('set current gist to this another gist', function() {
+                    expect(client.currentGist).to.equal(anotherGist);
                 });
 
-                it('adds output to gist', function(done) {
-                    expect(gist.addOuput(function() {
-                        done();
-                    }));
-                });
-
-                context('with another gist', function() {
-                    beforeEach(function() {
-                        anotherGist = new FakeGist();
-                        client.run(anotherGist);
-                    });
-
-                    it('re set current gist', function() {
-                        expect(client.currentGist).to.equal(anotherGist);
-                    });
-
-                    it('flushes previous gist', function() {
-                        expect(gist.flush).to.have.been.calledOnce;
-                    });
+                it('flushes previous gist', function() {
+                    expect(gist.flush).to.have.been.calledOnce;
                 });
             });
         });
     });
 
+    function FakeGist() {
+        this.addControls = sinon.stub();
+        this.addOuput = function(cb) { cb(); };
+        this.flush = sinon.stub();
+        this.language = 'ruby';
+        this.code = 'puts "hello world!';
+    }
+
     function expectNoToBeConnected() {
-        it('is not connected to runner', function() {
+        it('is not connected to code runner', function() {
             expect(client.connected()).to.be.false;
         });
     }
