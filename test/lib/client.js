@@ -84,7 +84,7 @@ describe('Client', function() {
                 client.disconnect();
             });
 
-            it('set current gist to this gist', function() {
+            it('sets current gist to this gist', function() {
                 expect(client.currentGist).to.equal(gist);
             });
 
@@ -100,13 +100,21 @@ describe('Client', function() {
                     client.run(anotherGist);
                 });
 
-                it('set current gist to this another gist', function() {
+                it('sets current gist to this another gist', function() {
                     expect(client.currentGist).to.equal(anotherGist);
                 });
 
                 it('flushes previous gist', function() {
                     expect(gist.flush).to.have.been.calledOnce;
                 });
+            });
+        });
+
+        context('when client is not connected', function() {
+            it('throws an error', function() {
+                expect(function() {
+                    client.run(gist);
+                }).to.throw(TypeError);
             });
         });
     });
