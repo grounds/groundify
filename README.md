@@ -1,4 +1,4 @@
-# groundify
+# Groundify
 [![Build Status](https://travis-ci.org/grounds/groundify.svg)](https://travis-ci.org/grounds/groundify)
 
 Groundify is a javascript plugin to make [gists](https://gist.github.com/)
@@ -17,8 +17,9 @@ this gist.
 
 ![Groundify](/images/example.png)
 
-## Installation
-1. Drop an embedded gist in your page:
+## Embedding Groundify
+
+1. Drop an embedded [gist](https://gist.github.com/) in your page:
     ```html
     <script src="https://gist.github.com/folieadrien/793e21dee21e0c7b81a8.js"></script>
     ```
@@ -28,4 +29,48 @@ this gist.
     <script src="https://rawgit.com/grounds/groundify/master/build/groundify.min.js"></script>
     ```
 
+## Hack on Groundify
 
+All you need is Node.js, npm and make installed to hack on Groundify.
+
+### Prerequisite
+
+1. Clone this project:
+
+    git clone https://github.com/grounds/groundify.git
+
+2. Get into this project directory
+
+    cd groundify
+
+3. Install dependencies:
+
+    make dependencies
+
+### Build
+
+    make all
+
+### Tests
+
+    make test
+
+If you want to only run unit tests:
+
+    make test-unit
+
+If you want to only run acceptance tests:
+
+    make test-acceptance
+
+## Author
+
+**Adrien Folie**
+
+* http://twitter.com/folieadrien
+* http://github.com/folieadrien
+
+## Licensing
+
+Groundify is licensed under the MIT License. See [LICENSE](LICENSE) for full
+license text.
