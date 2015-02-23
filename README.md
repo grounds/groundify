@@ -17,6 +17,8 @@ this gist.
 
 ![Groundify](/images/example.png)
 
+There is also a demo page available [here](/examples/index.html).
+
 ## Embedding Groundify
 
 1. Drop an embedded [gist](https://gist.github.com/) in your page:
@@ -31,25 +33,27 @@ this gist.
 
 ## Hack on Groundify
 
-All you need is Node.js, npm and make installed to hack on Groundify.
+All you need is [Node.js](http://nodejs.org/), [npm](https://www.npmjs.com/) and [make](http://www.gnu.org/software/make/) installed to hack on Groundify.
 
 ### Prerequisite
 
 1. Clone this project:
 
-    git clone https://github.com/grounds/groundify.git
+        git clone https://github.com/grounds/groundify.git
 
 2. Get into this project directory
 
-    cd groundify
+        cd groundify
 
 3. Install dependencies:
 
-    make dependencies
+        make dependencies
 
 ### Build
 
     make all
+
+This will build unminified and minified package in `build` directory.
 
 ### Tests
 
