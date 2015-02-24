@@ -13,26 +13,30 @@
     "browserify": "8.1.x",
     "browserify-swap": "0.2.x",
     "chai": "2.0.x",
+    "cssify": "0.6.x",
     "mocha": "2.1.x",
     "mocha-phantomjs": "3.5.x",
     "phantomjs": "1.9.x",
     "sinon": "1.12.x",
     "sinon-chai": "2.7.x",
-    "uglify-js": "2.4.x",
-    "watchify": "2.3.x"
+    "uglify-js": "2.4.x"
   },
   "scripts": {
     "test": "make test"
   },
   "browserify": {
     "transform": [
-      "browserify-swap"
+        "browserify-swap",
+        "cssify"
     ]
   },
   "browserify-swap": {
     "@packages": [
       "css"
     ],
+    "embedded": {
+      "css.js$": "./lib/markup/css_embedded.js"
+    },
     "extension": {
       "css.js$": "./lib/markup/css_extension.js"
     }
