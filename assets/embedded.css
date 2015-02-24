@@ -9,7 +9,7 @@
 .grounds-controls .grounds-run,
 .grounds-controls .grounds-flush {
     padding: 5px;
-    margin-right: 5px;
+    margin-right: -5px;
     border-radius: 2px;
     border: 1px solid #ddd;
     background-color: #f7f7f7;

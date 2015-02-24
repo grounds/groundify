@@ -1,5 +1,5 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var css = "/* Styles adapted for embedded gist markup. */\n\n.grounds-controls {\n    border-top: 1px solid #ddd;\n    border-bottom: 1px solid #ddd;\n    padding: 5px 5px 0px 5px;\n}\n\n.grounds-controls .grounds-run,\n.grounds-controls .grounds-flush {\n    padding: 5px;\n    margin-right: 5px;\n    border-radius: 2px;\n    border: 1px solid #ddd;\n    background-color: #f7f7f7;\n    font-weight: bold;\n    font: 12px Helvetica, arial, freesans, clean, sans-serif;\n    color: #666;\n}\n\n.grounds-controls .line-data.highlight {\n    padding: 0px !important;\n}\n\n.grounds-controls .grounds-console {\n    padding-bottom: 5px !important;\n}\n"; (require("/Users/folie_a/dev/groundify/node_modules/cssify"))(css); module.exports = css;
+var css = "/* Styles adapted for embedded gist markup. */\n\n.grounds-controls {\n    border-top: 1px solid #ddd;\n    border-bottom: 1px solid #ddd;\n    padding: 5px 5px 0px 5px;\n}\n\n.grounds-controls .grounds-run,\n.grounds-controls .grounds-flush {\n    padding: 5px;\n    margin-right: -5px;\n    border-radius: 2px;\n    border: 1px solid #ddd;\n    background-color: #f7f7f7;\n    font-weight: bold;\n    font: 12px Helvetica, arial, freesans, clean, sans-serif;\n    color: #666;\n}\n\n.grounds-controls .line-data.highlight {\n    padding: 0px !important;\n}\n\n.grounds-controls .grounds-console {\n    padding-bottom: 5px !important;\n}\n"; (require("/Users/folie_a/dev/groundify/node_modules/cssify"))(css); module.exports = css;
 },{"/Users/folie_a/dev/groundify/node_modules/cssify":9}],2:[function(require,module,exports){
 var io = require('socket.io-client'),
     markup = require('./markup'),
@@ -185,22 +185,17 @@ module.exports.klass = {
 },{"../../assets/embedded.css":1}],8:[function(require,module,exports){
 var css = require('./css');
 
+// This fs call is replaced by brfs to load html file.
+// This call must be isolated.
+//
+// See https://github.com/substack/brfs/issues/25.
+
+
 module.exports.prefix = 'grounds-';
 
 module.exports.klass = css.klass;
 
-module.exports.controls = [
-    '<div class="'+this.prefix+'controls">',
-        '<button class="'+this.prefix+'run">Run</button>',
-        '<button class="'+this.prefix+'flush">Flush</button>',
-        '<div class="line-data highlight">',
-            '<pre class="line-pre '+this.prefix+'console"></pre>',
-        '</div>',
-    '</div>',
-    '<div class="'+this.klass.meta+'">run with &#10084; by ',
-        '<a href="http://beta.42grounds.io">Grounds</a>',
-    '</div>'
-].join('');
+module.exports.controls = "<div class=\"grounds-controls\">\n    <button class=\"grounds-run\">Run</button>\n    <button class=\"grounds-flush\">Flush</button>\n    <div class=\"line-data highlight\">\n        <pre class=\"line-pre grounds-console\"></pre>\n    </div>\n</div>\n<div class=\"gist-meta\">run with &#10084; by\n    <a href=\"http://beta.42grounds.io\">Grounds</a>\n</div>\n";
 
 module.exports.output = function(output) {
     var klass = '';
