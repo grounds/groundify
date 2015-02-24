@@ -205,6 +205,7 @@ module.exports.output = function(output) {
             output.chunk = '[Program exited with status: '+output.chunk+']';
             klass = 'pl-ent';
             break;
+        case 'error':
         case 'stderr':
             klass = 'pl-s1';
             break;
