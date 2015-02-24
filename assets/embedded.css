@@ -9,7 +9,7 @@
 .grounds-controls .grounds-run,
 .grounds-controls .grounds-flush {
     padding: 5px;
-    margin-right: 5px;
+    margin-right: -5px;
     border-radius: 2px;
     border: 1px solid #ddd;
     background-color: #f7f7f7;
@@ -24,4 +24,8 @@
 
 .grounds-controls .grounds-console {
     padding-bottom: 5px !important;
+}
+
+.grounds-controls .top-buffer {
+    margin-top: 5px !important;
 }
