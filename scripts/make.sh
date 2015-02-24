@@ -4,16 +4,17 @@ set -e
 # Binaries used to build, test and package this project.
 bin="./node_modules/.bin"
 
-if [ -z "$BROWSERIFYSWAP_ENV" ]; then
-    build_type=""
+if [ -z "$BUILD_TYPE" ]; then
+    BUILD_TYPE="embedded"
+    build_suffix=""
 else
-    build_type="-$BROWSERIFYSWAP_ENV"
+    build_suffix="-$BUILD_TYPE"
 fi
 
 build_dir="build"
-build_name="groundify$build_type"
-build_target="$build_dir/$build_name.js"
-build_min_target="$build_dir/$build_name.min.js"
+name="groundify$build_suffix"
+target="$build_dir/$name.js"
+min_target="$build_dir/$name.min.js"
 
 clean() {
     rm -rf build/*
@@ -23,16 +24,12 @@ dependencies() {
     npm install
 }
 
-dev() {
-    $bin/watchify . -o $build_target
-}
-
 build() {
-    $bin/browserify . -o $build_target
+    BROWSERIFYSWAP_ENV=$BUILD_TYPE $bin/browserify . -o $target
 }
 
 minify() {
-    $bin/uglifyjs $build_target -o $build_min_target
+    $bin/uglifyjs $target -o $min_target
 }
 
 test_acceptance() {
