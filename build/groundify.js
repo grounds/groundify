@@ -27,18 +27,25 @@ Client.prototype.connect = function() {
         self.gists.forEach(function(gist){
            gist.addControls();
         });
+    }).on('connect_error', function() {
+        if (self.firstConnection) return;
+
+        self.firstConnection = true;
+        self.gists.forEach(function(gist){
+           gist.removeControls();
+        });
     }).on('run', function(data) {
         self.currentGist.addOutput(data);
     });
 }
 
 Client.prototype.disconnect = function() {
-    if (!this.connected()) return;
+    if (!this.isConnected()) return;
 
     this.socket.io.disconnect()
 }
 
-Client.prototype.connected = function() {
+Client.prototype.isConnected = function() {
     return !!this.socket && this.socket.connected;
 };
 
@@ -51,7 +58,7 @@ Client.prototype.run = function(gist) {
 
 // Shouldn't connect if there is no runnable gist.
 Client.prototype.shouldConnect = function() {
-    return this.gists.length > 0;
+    return !this.isConnected() && this.gists.length > 0;
 }
 
 Client.prototype.start = function() {
@@ -100,18 +107,6 @@ function Gist(element, client) {
     this.setCode();
 }
 
-Gist.prototype.isRunnable= function() {
-    return this.language !== '';
-}
-
-Gist.prototype.run = function() {
-    this.client.run(this);
-}
-
-Gist.prototype.flush = function() {
-    this.console.innerHTML = '';
-}
-
 Gist.prototype.setFilename = function() {
     this.filename = this.element.getElementsByTagName('a')[1].textContent;
 }
@@ -139,11 +134,13 @@ Gist.prototype.setCode = function() {
     }
 }
 
-
-Gist.prototype.getChildren = function(name) {
-    return this.element.getElementsByClassName(markup.prefix+name)[0];
+Gist.prototype.isRunnable= function() {
+    return this.language !== '';
 }
 
+Gist.prototype.run = function() {
+    this.client.run(this);
+}
 
 Gist.prototype.addControls = function() {
     // Add controls
@@ -161,8 +158,20 @@ Gist.prototype.addControls = function() {
     });
 }
 
+Gist.prototype.removeControls = function() {
+    this.element.innerHTML = '';
+}
+
 Gist.prototype.addOutput = function(output) {
     this.console.innerHTML += markup.output(output);
+}
+
+Gist.prototype.flush = function() {
+    this.console.innerHTML = '';
+}
+
+Gist.prototype.getChildren = function(name) {
+    return this.element.getElementsByClassName(markup.prefix+name)[0];
 }
 
 module.exports = Gist;

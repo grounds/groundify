@@ -21,24 +21,13 @@ describe('Client', function() {
                 client.gists = [];
             });
 
-            it("doesn't open a connection with code runner", function() {
-                expect(client.shouldConnect()).to.be.false;
-            });
-
             expectNoToBeConnected();
+            expectToNotConnect();
         });
 
         context('with invalid endpoint and runnable gists', function() {
             beforeEach(function(done) {
-                client.endpoint = '';
-                client.connect();
-                client.socket.on('connect_error', function(err) {
-                    done();
-                });
-            });
-
-            afterEach(function() {
-                client.socket.removeAllListeners('connect_error');
+                waitConnectionError(done);
             });
 
             expectNoToBeConnected();
@@ -50,18 +39,17 @@ describe('Client', function() {
 
         context('with valid endpoint and runnable gists', function() {
             beforeEach(function(done) {
-                client.connect();
-                client.socket.on('connect', function() {
-                    done();
-                });
+                waitConnection(done);
             });
 
             afterEach(function() {
                 client.disconnect();
             });
 
+            expectToNotConnect();
+
             it("opens a connection with code runner", function() {
-                expect(client.connected()).to.be.true;
+                expect(client.isConnected()).to.be.true;
             });
 
             it('adds controls to these gists', function() {
@@ -73,10 +61,8 @@ describe('Client', function() {
     describe('#run()', function() {
         context('when client is connected', function() {
             beforeEach(function(done) {
-                client.connect();
-                client.socket.on('connect', function() {
+                waitConnection(done, function() {
                     client.run(gist);
-                    done();
                 });
             });
 
@@ -119,17 +105,58 @@ describe('Client', function() {
         });
     });
 
+    context('when connection error after first connection', function() {
+        beforeEach(function(done) {
+            client.firstConnection = false;
+
+            waitConnectionError(done);
+        });
+
+        it('returns to first connection state', function() {
+            expect(client.firstConnection).to.be.true;
+        });
+
+        it('removes gists controls', function() {
+            expect(gist.removeControls).to.have.been.calledOnce;
+        });
+    });
+
+    function expectNoToBeConnected() {
+        it('is not connected to code runner', function() {
+            expect(client.isConnected()).to.be.false;
+        });
+    }
+
+    function expectToNotConnect() {
+        it("can't open a connection with code runner", function() {
+            expect(client.shouldConnect()).to.be.false;
+        });
+    }
+
+    function waitConnection(done, callback) {
+        client.connect();
+        client.socket.on('connect', function() {
+            if (typeof(callback) !== 'undefined')
+                callback();
+            done();
+        });
+    }
+
+    function waitConnectionError(done) {
+        client.endpoint = '';
+        client.connect();
+        client.socket.on('connect_error', function(err) {
+            client.socket.removeAllListeners('connect_error');
+            done();
+        });
+    }
+
     function FakeGist() {
         this.addControls = sinon.stub();
+        this.removeControls = sinon.stub();
         this.addOuput = function(cb) { cb(); };
         this.flush = sinon.stub();
         this.language = 'ruby';
         this.code = 'puts "hello world!';
-    }
-
-    function expectNoToBeConnected() {
-        it('is not connected to code runner', function() {
-            expect(client.connected()).to.be.false;
-        });
     }
 });
