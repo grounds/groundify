@@ -25,3 +25,7 @@
 .grounds-controls .grounds-console {
     padding-bottom: 5px !important;
 }
+
+.grounds-controls .top-buffer {
+    margin-top: 5px !important;
+}
