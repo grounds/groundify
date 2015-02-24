@@ -183,8 +183,6 @@ module.exports.klass = {
 }
 
 },{"../../assets/embedded.css":1}],8:[function(require,module,exports){
-var css = require('./css');
-
 // This fs call is replaced by brfs to load html file.
 // This call must be isolated.
 //
@@ -193,7 +191,7 @@ var css = require('./css');
 
 module.exports.prefix = 'grounds-';
 
-module.exports.klass = css.klass;
+module.exports.klass = require('./css').klass;
 
 module.exports.controls = "<div class=\"grounds-controls\">\n    <button class=\"grounds-run\">Run</button>\n    <button class=\"grounds-flush\">Flush</button>\n    <div class=\"line-data highlight\">\n        <pre class=\"line-pre grounds-console\"></pre>\n    </div>\n</div>\n<div class=\"gist-meta\">run with &#10084; by\n    <a href=\"http://beta.42grounds.io\">Grounds</a>\n</div>\n";
 
