@@ -46,8 +46,6 @@ describe('Each gist file', function() {
                 expect(gist.hasOutput(output)).to.be.true;
             });
 
-
-
             context('after clicking flush button', function() {
                 before(function(done){
                     gist.flush(function() {

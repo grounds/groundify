@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var css = "/* Styles adapted for embedded gist markup. */\n\n.grounds-controls {\n    border-top: 1px solid #ddd;\n    border-bottom: 1px solid #ddd;\n    padding: 5px;\n}\n\n.grounds-controls .grounds-run,\n.grounds-controls .grounds-flush {\n    padding: 5px;\n    margin-right: -5px;\n    border-radius: 2px;\n    border: 1px solid #ddd;\n    background-color: #f7f7f7;\n    font-weight: bold;\n    font: 12px Helvetica, arial, freesans, clean, sans-serif;\n    color: #666;\n}\n\n.grounds-controls .line-data.highlight {\n    padding: 0px !important;\n}\n\n.grounds-controls .top-buffer {\n    margin-top: 5px !important;\n}\n"; (require("/home/ubuntu/workspace/grounds-gist/node_modules/cssify"))(css); module.exports = css;
-},{"/home/ubuntu/workspace/grounds-gist/node_modules/cssify":9}],2:[function(require,module,exports){
+var css = "/* Styles adapted for embedded gist markup. */\n\n.grounds-controls {\n    border-top: 1px solid #ddd;\n    border-bottom: 1px solid #ddd;\n    padding: 5px;\n}\n\n.grounds-controls .grounds-run,\n.grounds-controls .grounds-flush {\n    padding: 5px;\n    margin-right: -5px;\n    border-radius: 2px;\n    border: 1px solid #ddd;\n    background-color: #f7f7f7;\n    font-weight: bold;\n    font: 12px Helvetica, arial, freesans, clean, sans-serif;\n    color: #666;\n}\n\n.grounds-controls .line-data.highlight {\n    padding: 0px !important;\n}\n\n.grounds-controls .top-buffer {\n    margin-top: 5px !important;\n}\n"; (require("/Users/folie_a/dev/groundify/node_modules/cssify"))(css); module.exports = css;
+},{"/Users/folie_a/dev/groundify/node_modules/cssify":9}],2:[function(require,module,exports){
 var io = require('socket.io-client'),
     markup = require('./markup'),
     Gist = require('./gist');
@@ -173,8 +173,8 @@ var constants = require('./constants'),
 
 var _ = new Client(constants.runnerURL).start();
 },{"./client":2,"./constants":3}],6:[function(require,module,exports){
-module.exports = require('/home/ubuntu/workspace/grounds-gist/lib/markup/css_embedded.js');
-},{"/home/ubuntu/workspace/grounds-gist/lib/markup/css_embedded.js":7}],7:[function(require,module,exports){
+module.exports = require('/Users/folie_a/dev/groundify/lib/markup/css_embedded.js');
+},{"/Users/folie_a/dev/groundify/lib/markup/css_embedded.js":7}],7:[function(require,module,exports){
 require('../../assets/embedded.css');
 
 module.exports.klass = {
