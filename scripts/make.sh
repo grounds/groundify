@@ -32,8 +32,8 @@ minify() {
     $bin/uglifyjs $target -o $min_target
 }
 
-test_acceptance() {
-    echo "-- Acceptance Tests --"
+test_integration() {
+    echo "-- Integration Tests --"
     $bin/mocha-phantomjs test/SpecRunner.html
     echo "----------------------"
 }
