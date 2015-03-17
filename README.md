@@ -1,5 +1,5 @@
 # Groundify
-[![Build Status](https://travis-ci.org/grounds/groundify.svg)](https://travis-ci.org/grounds/groundify)
+[![Circle CI](https://circleci.com/gh/grounds/groundify.svg?style=svg)](https://circleci.com/gh/grounds/groundify)
 
 Groundify is a javascript plugin to make [gists](https://gist.github.com/)
 runnable.
