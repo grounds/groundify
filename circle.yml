@@ -1,3 +1,9 @@
 machine:
   node:
     version: 0.10.30
+
+# Circle CI already takes care of running 
+# npm install to install dependencies and npm 
+# test to run the test suite.
+
+# npm test in package.json is set to run make test.
