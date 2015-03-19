@@ -1,6 +1,6 @@
-var prefix = 'grounds-',
-    NOT_SUPPORTED = 0,
-    RUNNABLE = 1;
+var Prefix       = 'grounds-',
+    NotSupported = 0,
+    Runnable     = 1;
 
 function Gist(type) {
     this.type = type;
@@ -13,7 +13,7 @@ Gist.prototype.getGroundsLink = function() {
 }
 
 Gist.prototype.getChildren = function(name) {
-    return this.getElement().getElementsByClassName(prefix+name)[0];
+    return this.getElement().getElementsByClassName(Prefix+name)[0];
 }
 
 Gist.prototype.getElement = function(name) {
