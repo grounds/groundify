@@ -9,7 +9,7 @@ describe('Each gist file', function() {
 
     context('when language is supported', function() {
         beforeEach(function(done) {
-            gist = new Gist(RUNNABLE);
+            gist = new Gist(Runnable);
 
             gist.isReady(function() {
                 done();
@@ -72,7 +72,7 @@ describe('Each gist file', function() {
 
     context('when language is not supported', function() {
         beforeEach(function() {
-            gist = new Gist(NOT_SUPPORTED);
+            gist = new Gist(NotSupported);
         });
 
         ['run', 'flush'].forEach(function(name) {
