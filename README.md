@@ -15,7 +15,7 @@ this gist.
 
 ## Example:
 
-![Groundify](/images/example.png)
+<img src="/images/example.png" width="473px" height="300px">
 
 There is also a demo page available [here](/examples/index.html).
 
