@@ -23,7 +23,7 @@ There is also a demo page available [here](/examples/index.html).
 
 1. Drop an embedded [gist](https://gist.github.com/) in your page:
     ```html
-    <script src="https://gist.github.com/folieadrien/793e21dee21e0c7b81a8.js"></script>
+    <script src="https://gist.github.com/foliea/793e21dee21e0c7b81a8.js"></script>
     ```
 
 2. Drop groundify plugin in your page:
@@ -71,7 +71,7 @@ If you want to only run acceptance tests:
 
 **Adrien Folie**
 
-* http://twitter.com/folieadrien
+* http://twitter.com/foliea
 * http://github.com/folieadrien
 
 ## Licensing
