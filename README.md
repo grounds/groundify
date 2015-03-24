@@ -71,8 +71,8 @@ If you want to only run acceptance tests:
 
 **Adrien Folie**
 
-* http://twitter.com/foliea
-* http://github.com/folieadrien
+* http://twitter.com/folieadrien
+* http://github.com/foliea
 
 ## Licensing
 
